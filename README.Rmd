@@ -1,0 +1,53 @@
+---
+title: "SIG5_field3"
+author: "Haruki Nishio"
+date: "2023/11/12"
+---
+
+```{r setting, include=F}
+knitr::opts_chunk$set(echo = F, warning = F)
+
+# Load libraries
+library(rmdformats)
+library(knitr)
+```
+
+### 01_STM_diff_MarSep_rep.R
+The R code for smooth trend models to evaluate the differences in gene expression between March and September in 2015.
+
+### 02_STM_diff_SunShade_rep.R
+The R code for smooth trend models to evaluate the differences in gene expression between sun and shade conditions in 2015.
+
+### 03_STM_diff_local_rep.R
+The R code for smooth trend models to evaluate the differences in gene expression between different conditions in the temperature manipulation experiment (September 2016).
+
+### 04_SSM_cyclic_MarSep_SIG5.R
+The R code for local level models with external variables to evaluate the influences of temperature, irradiance and AhgCCA1 transcript on AhgSIG5 transcript in March and September, 2015.
+
+### 05_SSM_cyclic_MarSep_BLRP.R
+The R code for local level models with external variables to evaluate the influences of temperature, irradiance and AhgSIG5 transcript on AhgpsbD BLRP transcript in March and September, 2015.
+
+### 06_SSM_cyclic_MarSep_constant_input2.R
+The R code for the prediction of AhgSIG5 and AhgpsbD BLRP transcripts in local level models with external variables, setting each of external variables as a constant value, in March and September, 2015.
+
+### 07_Embedding_local.R
+The R code to determine the optimal embedding dimension E for AhgCCA1, AhgSIG5 and AhgpsbD BLRP transcripts in the temperature manipulation experiment (September 2016).
+
+### 08_CCM_local.R
+The R code to perform convergent cross mapping (CCM) between AhgCCA1 and AhgSIG5, and between AhgSIG5 and AhgpsbD BLRP in the temperature manipulation experiments (September 2016).
+
+### 09_Convergence_local.R
+The R code to test convergence in CCM between AhgCCA1 and AhgSIG5, and between AhgSIG5 and AhgpsbD BLRP in the temperature manipulation experiments (September 2016).
+
+### Fig.xx.R files
+The R codes to generate the main Figures and Supplementary Figures.
+
+### data
+The raw data of transcript abundance and environmental factors.
+
+### functions
+The custom functions to perform analyses and generate figures.
+
+### stan_model
+The stan codes which describe state space models.
+
