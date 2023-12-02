@@ -1,6 +1,6 @@
 
 # Set working directory
-setwd("/Volume3/hnishio/R/SIG5_field2")
+setwd("/Volume3/hnishio/R/SIG5_field3")
 
 # Load packages
 library(ggpubr)
@@ -26,10 +26,10 @@ g_text <- ggplot() + theme_void() +
   geom_rect(aes(xmin=1.1, xmax=1.6, ymin=-0.2, ymax=0.2), fill=NA, col="black") +
   coord_cartesian(xlim = c(-1.5, 1.5), ylim = c(-1.5, 0.5), clip = "off") +
   annotate("text", x=-0.2, y=0.3, label = "Causality", size = 7/ggplot2::.pt) +
-  annotate("text", x=-0.2, y=-0.28, label = "Prediction", size = 7/ggplot2::.pt, col = "firebrick") +
-  annotate("text", x=-0.2, y=-0.48, label = "(or cross mapping)", size = 7/ggplot2::.pt, col = "firebrick") +
-  annotate("text", x=-0.2, y=-0.68, label = "of present or past values", size = 7/ggplot2::.pt, col = "firebrick") +
-  annotate("text", x=-0.2, y=-0.88, label = "is successful", size = 7/ggplot2::.pt, col = "firebrick") +
+  annotate("text", x=-0.2, y=-0.3, label = "Successful prediction", size = 7/ggplot2::.pt, col = "firebrick") +
+  annotate("text", x=-0.2, y=-0.5, label = "(or cross mapping)", size = 7/ggplot2::.pt, col = "firebrick") +
+  annotate("text", x=-0.2, y=-0.7, label = "of present or past values", size = 7/ggplot2::.pt, col = "firebrick") +
+  # annotate("text", x=-0.2, y=-0.88, label = "is successful", size = 7/ggplot2::.pt, col = "firebrick") +
   annotate("text", x=-1.7, y=0, label = "X", size = 12/ggplot2::.pt) +
   annotate("text", x=1.35, y=0, label = "Y", size = 12/ggplot2::.pt)
 
@@ -68,6 +68,6 @@ g <- (g_text + labs(tag = "A")) + void +
   theme(plot.tag = element_text(face = "bold", size = 10))
 
 out <- "figures/"
-ggsave(paste0(out, "Fig.4_CCM_230404.pdf"),
+ggsave(paste0(out, "Fig.5_CCM_231116.pdf"),
        g, width = 95*3/2, height = 100, units = "mm")
 

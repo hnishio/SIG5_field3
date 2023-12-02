@@ -15,7 +15,7 @@ if(file.exists(out)==F){
 }
 
 # Load plot function
-source("functions/Plot_functions.R")
+source("functions/Plot_functions_231123_v3.R")
 
 
 # Load data
@@ -125,6 +125,6 @@ g <- {
   # plot_annotation(title = "Fig. S3") &
   # theme(plot.tag = element_text(size = 10))
 
-ggsave(paste0(out, "Fig.2_CRM_231104.pdf"),
+ggsave(paste0(out, "Fig.3_LLMX_231202_v3.pdf"),
        g, width = 110, height = 140, units = "mm")
 

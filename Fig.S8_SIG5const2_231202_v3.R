@@ -1,6 +1,6 @@
 
 # Set working directory
-setwd("/Volume3/hnishio/R/SIG5_field2")
+setwd("/Volume3/hnishio/R/SIG5_field3")
 
 # Load packages
 library(ggpubr)
@@ -15,22 +15,22 @@ if(file.exists(out)==F){
 }
 
 # Load plot function
-source("functions/Plot_functions.R")
+source("functions/Plot_functions_231123_v3.R")
 
 
 # Load data
 data <- read.csv("data/march_data.csv")
-input <- "06_SSM_cyclic_MarSep_constant_input/"
+input <- "06_SSM_cyclic_MarSep_constant_input2/"
 
 
-## BLRP
+## SIG5
 
 # Load output
-out_name <- paste0("SSM_cyclic_MarSep_BLRP_Lagtemp0_Laglight0_LagSIG50")
+out_name <- paste0("SSM_cyclic_MarSep_SIG5_Lagtemp0_Laglight0_LagCCA10")
 df_natural <- as.data.frame(fread(paste0(input, out_name, "_pred_natural.csv")))
 df_meantemp <- as.data.frame(fread(paste0(input, out_name, "_pred_meantemp.csv")))
 df_meanlight <- as.data.frame(fread(paste0(input, out_name, "_pred_meanlight.csv")))
-df_meanSIG5 <- as.data.frame(fread(paste0(input, out_name, "_pred_meanSIG5.csv")))
+df_meanCCA1 <- as.data.frame(fread(paste0(input, out_name, "_pred_meanCCA1.csv")))
 
 # Adjustment of data frame
 df_natural <- as.data.frame(cbind(df_natural, unique(data$Time)))
@@ -39,18 +39,19 @@ df_meantemp <- as.data.frame(cbind(df_meantemp, unique(data$Time)))
 names(df_meantemp)[ncol(df_meantemp)] <- c("time")
 df_meanlight <- as.data.frame(cbind(df_meanlight, unique(data$Time)))
 names(df_meanlight)[ncol(df_meanlight)] <- c("time")
-df_meanSIG5 <- as.data.frame(cbind(df_meanSIG5, unique(data$Time)))
-names(df_meanSIG5)[ncol(df_meanSIG5)] <- c("time")
+df_meanCCA1 <- as.data.frame(cbind(df_meanCCA1, unique(data$Time)))
+names(df_meanCCA1)[ncol(df_meanCCA1)] <- c("time")
 
 # Draw figures
-g_BLRP_natural <- Pred_vis_cyclic_constant(df=df_natural, var="AhgpsbD BLRP", cond="natural")
-g_BLRP_meantemp <- Pred_vis_cyclic_constant(df=df_meantemp, var="AhgpsbD BLRP", cond="mean temp.")
-g_BLRP_meanlight <- Pred_vis_cyclic_constant(df=df_meanlight, var="AhgpsbD BLRP", cond="mean irrad.")
-g_BLRP_meanSIG5 <- Pred_vis_cyclic_constant(df=df_meanSIG5, var="AhgpsbD BLRP", cond="mean AhgSIG5")
+g_SIG5_natural <- Pred_vis_cyclic_constant(df=df_natural, var="AhgSIG5", cond="natural")
+g_SIG5_meantemp <- Pred_vis_cyclic_constant(df=df_meantemp, var="AhgSIG5", cond="mean temp.")
+g_SIG5_meanlight <- Pred_vis_cyclic_constant(df=df_meanlight, var="AhgSIG5", cond="mean irrad.")
+g_SIG5_meanCCA1 <- Pred_vis_cyclic_constant(df=df_meanCCA1, var="AhgSIG5", cond="mean AhgCCA1")
+
 
 
 ### Integration of all plots into a figure
-glist_all <- c(g_BLRP_natural, g_BLRP_meantemp, g_BLRP_meanlight, g_BLRP_meanSIG5)
+glist_all <- c(g_SIG5_natural, g_SIG5_meantemp, g_SIG5_meanlight, g_SIG5_meanCCA1)
 
 void <- ggplot() + theme_void()
 
@@ -68,9 +69,9 @@ g <- {
   void /
   legend_MarSep1_dlm +
   plot_layout(heights = c(1, 0.05, 0.05)) #+ 
-#plot_annotation(title = "Fig. S6") &
+#plot_annotation(title = "Fig. S5") &
 #theme(plot.tag = element_text(size = 10))
 
-ggsave(paste0(out, "Fig.S10_BLRPconst_230402.pdf"),
-       g, width = 102, height = 140, units = "mm")
+ggsave(paste0(out, "Fig.S8_SIG5const2_231202_v3.pdf"),
+       g, width = 110, height = 140, units = "mm")
 

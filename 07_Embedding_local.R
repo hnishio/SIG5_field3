@@ -91,8 +91,9 @@ for(i in 1:length(genes)){
   eval(parse(text = paste0(
     "g_", genes[i], " <- Eplot(d[,", i, "], d_name='", genes[i], "', E_range = 1:10, 
                   lib_type = lib_type_used)
+     g <- g_", genes[i], "[[1]] + g_", genes[i], "[[2]] + g_", genes[i], "[[3]]
       ggsave(paste0(out, 'E_', genes[i], '_local.pdf'),
-         g_", genes[i], ", height = 35, width = 120, units = 'mm')"
+         g, height = 35, width = 120, units = 'mm')"
   )))
 }
 
@@ -140,12 +141,12 @@ for(i in 1){
            pred3 = simplex.out$model_output[[10]][1:14,"pred"])
   df_W <- simplex.out$model_output[[2]][16:29,1:3] %>% 
     mutate(time = 1:14,
-           pred2 = simplex.out$model_output[[8]][1:14,"pred"],
-           pred3 = simplex.out$model_output[[10]][1:14,"pred"])
+           pred2 = simplex.out$model_output[[8]][16:29,"pred"],
+           pred3 = simplex.out$model_output[[10]][16:29,"pred"])
   df_C <- simplex.out$model_output[[2]][31:44,1:3] %>% 
     mutate(time = 1:14,
-           pred2 = simplex.out$model_output[[8]][1:14,"pred"],
-           pred3 = simplex.out$model_output[[10]][1:14,"pred"])
+           pred2 = simplex.out$model_output[[8]][31:44,"pred"],
+           pred3 = simplex.out$model_output[[10]][31:44,"pred"])
   
   ymin <- min(c(c(as.matrix(df_A[,-1])), c(as.matrix(df_W[,-1])), c(as.matrix(df_C[,-1]))), na.rm = T)
   ymax <- max(c(c(as.matrix(df_A[,-1])), c(as.matrix(df_W[,-1])), c(as.matrix(df_C[,-1]))), na.rm = T)
@@ -235,12 +236,12 @@ for(i in 2){
            pred3 = simplex.out$model_output[[9]][1:14,"pred"])
   df_W <- simplex.out$model_output[[4]][16:29,1:3] %>% 
     mutate(time = 1:14,
-           pred2 = simplex.out$model_output[[8]][1:14,"pred"],
-           pred3 = simplex.out$model_output[[9]][1:14,"pred"])
+           pred2 = simplex.out$model_output[[8]][16:29,"pred"],
+           pred3 = simplex.out$model_output[[9]][16:29,"pred"])
   df_C <- simplex.out$model_output[[4]][31:44,1:3] %>% 
     mutate(time = 1:14,
-           pred2 = simplex.out$model_output[[8]][1:14,"pred"],
-           pred3 = simplex.out$model_output[[9]][1:14,"pred"])
+           pred2 = simplex.out$model_output[[8]][31:44,"pred"],
+           pred3 = simplex.out$model_output[[9]][31:44,"pred"])
   
   ymin <- min(c(c(as.matrix(df_A[,-1])), c(as.matrix(df_W[,-1])), c(as.matrix(df_C[,-1]))), na.rm = T)
   ymax <- max(c(c(as.matrix(df_A[,-1])), c(as.matrix(df_W[,-1])), c(as.matrix(df_C[,-1]))), na.rm = T)
@@ -330,12 +331,12 @@ for(i in 3){
            pred3 = simplex.out$model_output[[4]][1:14,"pred"])
   df_W <- simplex.out$model_output[[1]][16:29,1:3] %>% 
     mutate(time = 1:14,
-           pred2 = simplex.out$model_output[[2]][1:14,"pred"],
-           pred3 = simplex.out$model_output[[4]][1:14,"pred"])
+           pred2 = simplex.out$model_output[[2]][16:29,"pred"],
+           pred3 = simplex.out$model_output[[4]][16:29,"pred"])
   df_C <- simplex.out$model_output[[1]][31:44,1:3] %>% 
     mutate(time = 1:14,
-           pred2 = simplex.out$model_output[[2]][1:14,"pred"],
-           pred3 = simplex.out$model_output[[4]][1:14,"pred"])
+           pred2 = simplex.out$model_output[[2]][31:44,"pred"],
+           pred3 = simplex.out$model_output[[4]][31:44,"pred"])
   
   ymin <- min(c(c(as.matrix(df_A[,-1])), c(as.matrix(df_W[,-1])), c(as.matrix(df_C[,-1]))), na.rm = T)
   ymax <- max(c(c(as.matrix(df_A[,-1])), c(as.matrix(df_W[,-1])), c(as.matrix(df_C[,-1]))), na.rm = T)

@@ -9,7 +9,7 @@ library(patchwork)
 library(plyr)
 
 # Load plot function
-source("functions/Plot_functions.R")
+source("functions/Plot_functions_231123_v3.R")
 
 # Create output directory
 out <- "figures/"
@@ -32,11 +32,17 @@ local_environment_data_sampling <-
 local_environment_data_sampling$Condition = factor(local_environment_data_sampling$Condition, 
                                                    levels=c("Ambient Conditions", "Warm", "Chill", "Low light"))
 local_environment_data_sampling <- local_environment_data_sampling[local_environment_data_sampling$Condition!=unique(local_environment_data_sampling$Condition)[4],]
+local_environment_data_sampling$Time <- local_environment_data_sampling$Time + 6
+
+#sunrise1_sep <- 5+41/60
+sunset1_sep <- 18+13/60
+sunrise2_sep <- 5+40/60 + 24
+sunset2_sep <- 18+11/60 + 24
 
 # plot code:
 g_temp <- ggplot(local_environment_data_sampling, aes(x=Time, y=Temperature, group=Condition, color=Condition)) + 
-  annotate("rect", xmin = 12, xmax = 24, ymin = 13, ymax = 32, alpha = 0.3, fill = "gray50")+
-  annotate("rect", xmin = 36, xmax = 39, ymin = 13, ymax = 32, alpha = 0.3, fill = "gray50")+
+  annotate("rect", xmin = sunset1_sep, xmax = sunrise2_sep, ymin = 13, ymax = 32, alpha = 0.3, fill = "gray50") +
+  annotate("rect", xmin = sunset2_sep, xmax = 45, ymin = 13, ymax = 32, alpha = 0.3, fill = "gray50") +
   #geom_point(aes(color=Condition), shape=19, size=1, alpha = 0.6, stroke = 1.2)+
   geom_line(aes(color=Condition), size= 1, alpha = 1) +
   theme_classic(7) +
@@ -48,11 +54,11 @@ g_temp <- ggplot(local_environment_data_sampling, aes(x=Time, y=Temperature, gro
   scale_colour_manual(values=c("black", "orangered", "cyan3"))+
   scale_fill_manual(values=c("black", "orangered", "cyan3"))+
   scale_y_continuous(expand = c(0, 0), breaks=seq(15,30,5), limits = c(13, 32))+
-  scale_x_continuous(breaks=seq(12,36,6), limits=c(11,39))+
+  scale_x_continuous(breaks=c(18, 24, 30, 36, 42), labels=c("18:00", "0:00", "6:00", "12:00", "18:00")) +
   labs(
     #title = "Temperature", subtitle = "Multiple local treatments", 
     tag = "D", 
-    x = "Time relative to initial dawn (h)", 
+    x = "Local time (hh:mm)", 
     y = expression(atop("Temperature",  paste("(°C)" ))))
 
 
@@ -70,11 +76,12 @@ local_data <- local_data[local_data$Condition!=unique(local_data$Condition)[4],]
 local_data_CCA1 <- ddply(local_data, .(Time, Condition), summarise, 
                              M = mean(CCA1), SE = sd(CCA1) / sqrt((length(CCA1))), 
                              SD = sd(CCA1))
+local_data_CCA1$Time <- local_data_CCA1$Time + 6
 
 # plot code:
 g_local_data_CCA1 <- ggplot(local_data_CCA1, aes(x=Time, y=M, group=Condition, color=Condition)) + 
-  annotate("rect", xmin = 12, xmax = 24, ymin = 0, ymax = 32, alpha = 0.3, fill = "gray50")+
-  annotate("rect", xmin = 36, xmax = 39, ymin = 0, ymax = 32, alpha = 0.3, fill = "gray50")+
+  annotate("rect", xmin = sunset1_sep, xmax = sunrise2_sep, ymin = 0, ymax = 32, alpha = 0.3, fill = "gray50") +
+  annotate("rect", xmin = sunset2_sep, xmax = 45, ymin = 0, ymax = 32, alpha = 0.3, fill = "gray50") +
   # annotate("text", x = 25, y = 37, label = "*", size = 5, color = "orangered")+
   # annotate("text", x = 23, y = 21, label = "*", size = 5, color = "cyan3")+
   # annotate("text", x = 19, y = 8, label = "*", size = 5, color = "lavenderblush4")+
@@ -91,16 +98,16 @@ g_local_data_CCA1 <- ggplot(local_data_CCA1, aes(x=Time, y=M, group=Condition, c
         legend.title = element_text(size = 7, colour = "black"),
         axis.text = element_text(size = 7, colour = "black"),
         axis.title = element_text(size = 7, colour = "black"),
-        plot.title = element_text(size = 7, colour = "black"),
+        plot.title = element_text(size = 7, face = "italic"),
         plot.subtitle = element_text(size = 7, colour = "black"),
         plot.tag = element_text(size = 10, colour = "black", face = "bold"))+
   scale_colour_manual(values=c("black", "orangered", "cyan3"))+
   scale_fill_manual(values=c("black", "orangered", "cyan3"))+
   scale_y_continuous(expand = c(0, 0), breaks=seq(0,30,10))+
-  scale_x_continuous(breaks=seq(12,36,6))+
-  labs(expression(italic(AhgCCA1)),
+  scale_x_continuous(breaks=c(18, 24, 30, 36, 42), labels=c("18:00", "0:00", "6:00", "12:00", "18:00")) +
+  labs(title = "AhgCCA1",
        tag = "E", 
-       x = "Time relative to initial dawn (h)", 
+       x = "Local time (hh:mm)", 
        y = "Relative\ntranscript\nabundance")
 
 
@@ -111,11 +118,12 @@ g_local_data_CCA1 <- ggplot(local_data_CCA1, aes(x=Time, y=M, group=Condition, c
 local_data_SIG5 <- ddply(local_data, .(Time, Condition), summarise, 
                          M = mean(SIG5), SE = sd(SIG5) / sqrt((length(SIG5))), 
                          SD = sd(SIG5))
+local_data_SIG5$Time <- local_data_SIG5$Time + 6
 
 # plot code:
 g_local_data_SIG5 <- ggplot(local_data_SIG5, aes(x=Time, y=M, group=Condition, color=Condition)) + 
-  annotate("rect", xmin = 12, xmax = 24, ymin = 0, ymax = 5.3, alpha = 0.3, fill = "gray50")+
-  annotate("rect", xmin = 36, xmax = 39, ymin = 0, ymax = 5.3, alpha = 0.3, fill = "gray50")+
+  annotate("rect", xmin = sunset1_sep, xmax = sunrise2_sep, ymin = 0, ymax = 5.3, alpha = 0.3, fill = "gray50") +
+  annotate("rect", xmin = sunset2_sep, xmax = 45, ymin = 0, ymax = 5.3, alpha = 0.3, fill = "gray50") +
   # annotate("text", x = 27, y = 6, label = "*", size = 5, color = "cyan3")+
   # annotate("text", x = 29, y = 3.7, label = "*", size = 5, color = "cyan3")+
   # annotate("text", x = 33, y = 3.7, label = "*", size = 5, color = "cyan3")+
@@ -132,16 +140,16 @@ g_local_data_SIG5 <- ggplot(local_data_SIG5, aes(x=Time, y=M, group=Condition, c
         axis.text = element_text(size = 7, colour = "black"),
         legend.title = element_text(size = 7, colour = "black"),
         axis.title = element_text(size = 7, colour = "black"),
-        plot.title = element_text(size = 7, colour = "black"),
+        plot.title = element_text(size = 7, face = "italic"),
         plot.subtitle = element_text(size = 7, colour = "black"),
         plot.tag = element_text(size = 10, colour = "black", face = "bold"))+
   scale_colour_manual(values=c("black", "orangered", "cyan3"))+
   scale_fill_manual(values=c("black", "orangered", "cyan3"))+
   scale_y_continuous(expand = c(0, 0), breaks=seq(0,5,1))+
-  scale_x_continuous(breaks=seq(12,36,6))+
-  labs(expression(italic(AhgSIG5)),
+  scale_x_continuous(breaks=c(18, 24, 30, 36, 42), labels=c("18:00", "0:00", "6:00", "12:00", "18:00")) +
+  labs(title = "AhgSIG5",
        tag = "F", 
-       x = "Time relative to initial dawn (h)", 
+       x = "Local time (hh:mm)", 
        y = "Relative\ntranscript\nabundance")
 
 
@@ -151,11 +159,12 @@ g_local_data_SIG5 <- ggplot(local_data_SIG5, aes(x=Time, y=M, group=Condition, c
 local_data_BLRP <- ddply(local_data, .(Time, Condition), summarise, 
                          M = mean(BLRP, na.rm=T), SE = sd(BLRP, na.rm=T) / sqrt((length(BLRP))), 
                          SD = sd(BLRP, na.rm=T))
+local_data_BLRP$Time <- local_data_BLRP$Time + 6
 
 # plot code:
 g_local_data_BLRP <- ggplot(local_data_BLRP, aes(x=Time, y=M, group=Condition, color=Condition)) + 
-  annotate("rect", xmin = 12, xmax = 24, ymin = 0, ymax = 9, alpha = 0.3, fill = "gray50")+
-  annotate("rect", xmin = 36, xmax = 39, ymin = 0, ymax = 9, alpha = 0.3, fill = "gray50")+
+  annotate("rect", xmin = sunset1_sep, xmax = sunrise2_sep, ymin = 0, ymax = 9, alpha = 0.3, fill = "gray50") +
+  annotate("rect", xmin = sunset2_sep, xmax = 45, ymin = 0, ymax = 9, alpha = 0.3, fill = "gray50") +
   # annotate("text", x = 25, y = 5, label = "*", size = 5, color = "orangered")+
   # annotate("text", x = 27, y = 5, label = "*", size = 5, color = "orangered")+
   # annotate("text", x = 29, y = 6, label = "*", size = 5, color = "orangered")+
@@ -176,16 +185,16 @@ g_local_data_BLRP <- ggplot(local_data_BLRP, aes(x=Time, y=M, group=Condition, c
         legend.title = element_text(size = 7, colour = "black"),
         axis.text = element_text(size = 7, colour = "black"),
         axis.title = element_text(size = 7, colour = "black"),
-        plot.title = element_text(size = 7, colour = "black"),
+        plot.title = element_text(size = 7, face = "italic"),
         plot.subtitle = element_text(size = 7, colour = "black"),
         plot.tag = element_text(size = 10, colour = "black", face = "bold"))+
   scale_colour_manual(values=c("black", "orangered", "cyan3"))+
   scale_fill_manual(values=c("black", "orangered", "cyan3"))+
   scale_y_continuous(expand = c(0, 0), breaks=seq(0,8,2))+
-  scale_x_continuous(breaks=seq(12,36,6))+
-  labs(expression(italic("AhgpsbD BLRP")),
+  scale_x_continuous(breaks=c(18, 24, 30, 36, 42), labels=c("18:00", "0:00", "6:00", "12:00", "18:00")) +
+  labs(title = "AhgpsbD BLRP",
        tag = "G", 
-       x = "Time relative to initial dawn (h)", 
+       x = "Local time (hh:mm)", 
        y = "Relative\ntranscript\nabundance")
 
 
@@ -199,6 +208,6 @@ g <- ((glist[[1]] | glist[[2]]) /
   legend_local1 +
   plot_layout(heights = c(5, 5, 1.5))
 
-ggsave("figures/Fig.S11_local_original_231112.pdf",
+ggsave("figures/Fig.S10_local_original_231202_v3.pdf",
        g, width = 130, height = 80, units = "mm")
 

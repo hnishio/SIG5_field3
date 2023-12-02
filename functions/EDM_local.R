@@ -95,7 +95,7 @@ Eplot <- function(time_series,
           panel.grid.major = element_line(size = 0.2)) +
     labs(title = bquote(paste(italic(.(prefix)), italic(.(d_name)), sep="")),
          x = expression(paste("Embedding dimention (", italic(E), ")")),
-         y = "Forecast skill (rho)")
+         y = expression(paste("Forecast skill (", italic(rho), ")")))
   
   g2 <- ggplot(data = simplex.out, aes(x = E, y = as.numeric(mae))) +
     geom_line() +
@@ -123,7 +123,7 @@ Eplot <- function(time_series,
          x = expression(paste("Embedding dimention (", italic(E), ")")),
          y = "Forecast skill (RMSE)")
   
-  g <- g1 + g2 + g3
+  g <- list(g1, g2, g3)
   
   return(g)
 }
@@ -267,7 +267,7 @@ CCMplot <- function(ccm_res, x_name, y_name, spar, outdir){
           plot.title = element_text(size=6)) + 
     labs(title="",
          x=expression(paste("Time to prediction (",italic(tp),")")), 
-         y=expression(paste("Cross-map skill (", italic(rho), ")")))
+         y=expression(paste("Cross map skill (", italic(rho), ")")))
   
   return(g)
 }
@@ -364,7 +364,7 @@ Convergence_plot <- function(conv_res, x_name, y_name, tpx, tpy, spar, outdir){
   #         axis.text=element_text(size=7)) + 
   #   labs(title = c(paste0(x," xmap ", y, "\n (tp = ",tpx,")")), 
   #        x = "Library size", 
-  #        y = expression(paste("Cross-map skill (", italic(rho), ")")))
+  #        y = expression(paste("Cross map skill (", italic(rho), ")")))
   # ggsave(paste0("04_Convergence_out/spar", spar, "/Convergence_",x,"xmap",y,"_tp=",tpx, "_spar", spar,".pdf"), 
   #        g1, height = 45, width = 38, units = "mm")
   
@@ -385,7 +385,7 @@ Convergence_plot <- function(conv_res, x_name, y_name, tpx, tpy, spar, outdir){
                             italic(.(x_name)), sep="")),
          subtitle=bquote(paste("(tp = ", .(tpy), ")", sep="")),
          x="Library size", 
-         y=expression(paste("Cross-map skill (", italic(rho), ")")))
+         y=expression(paste("Cross map skill (", italic(rho), ")")))
   return(g2)
 }
 

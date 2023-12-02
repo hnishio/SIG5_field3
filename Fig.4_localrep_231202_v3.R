@@ -1,6 +1,6 @@
 
 # Set working directory
-setwd("/Volume3/hnishio/R/SIG5_field2")
+setwd("/Volume3/hnishio/R/SIG5_field3")
 
 # Load packages
 library(ggpubr)
@@ -15,7 +15,7 @@ if(file.exists(out)==F){
 }
 
 # Load plot function
-source("functions/Plot_functions.R")
+source("functions/Plot_functions_231123_v3.R")
 
 
 
@@ -27,10 +27,17 @@ local_environment_data <- read.csv("data/local_environment_data.csv")
 local_environment_data$Condition = factor(local_environment_data$Condition, levels=c("Ambient Conditions", "Warm", "Chill", "Low light"))
 local_environment_data <- local_environment_data[local_environment_data$Condition!=unique(local_environment_data$Condition)[4],]
 
+local_environment_data$Time <- local_environment_data$Time + 6
+
+#sunrise1_sep <- 5+41/60
+sunset1_sep <- 18+13/60
+sunrise2_sep <- 5+40/60 + 24
+sunset2_sep <- 18+11/60 + 24
+
 # plot code:
 g_temp <- ggplot(local_environment_data, aes(x=Time, y=Temperature, group=Condition, color=Condition)) + 
-  annotate("rect", xmin = 12, xmax = 24, ymin = 13, ymax = 32, alpha = 0.3, fill = "gray50")+
-  annotate("rect", xmin = 36, xmax = 39, ymin = 13, ymax = 32, alpha = 0.3, fill = "gray50")+
+  annotate("rect", xmin = sunset1_sep, xmax = sunrise2_sep, ymin = 13, ymax = 32, alpha = 0.3, fill = "gray50") +
+  annotate("rect", xmin = sunset2_sep, xmax = 45, ymin = 13, ymax = 32, alpha = 0.3, fill = "gray50") +
   #geom_point(aes(color=Condition), shape=19, size=1, alpha = 0.6, stroke = 1.2)+
   geom_line(aes(color=Condition), alpha = 1) +
   theme_classic(7) +
@@ -41,12 +48,12 @@ g_temp <- ggplot(local_environment_data, aes(x=Time, y=Temperature, group=Condit
         plot.tag = element_text(size = 10, face = "bold"))+
   scale_colour_manual(values=c("black", "orangered", "cyan3", "lavenderblush4"))+
   scale_fill_manual(values=c("black", "orangered", "cyan3", "lavenderblush4"))+
+  scale_x_continuous(breaks=c(18, 24, 30, 36, 42), labels=c("18:00", "0:00", "6:00", "12:00", "18:00")) +
   scale_y_continuous(expand = c(0, 0), breaks=seq(15,30,5), limits = c(13, 32))+
-  scale_x_continuous(breaks=seq(12,36,6), limits=c(11,39))+
   labs(
     #title = "Temperature", subtitle = "Multiple local treatments", 
     tag = "B", 
-    x = "Time relative to initial dawn (h)", 
+    x = "Local time (hh:mm)", 
     y = expression(atop("Temperature",  paste("(°C)" ))))
 
 
@@ -78,6 +85,6 @@ g <- (glist[[1]] + labs(tag = "A")) + (glist[[2]] + labs(tag = "B")) +
   # plot_annotation(title = "Fig. 4") &
   # theme(plot.tag = element_text(size = 10))
 
-ggsave(paste0(out, "Fig.3_localrep_230402.pdf"),
-       g, width = 130, height = 130, units = "mm")
+ggsave(paste0(out, "Fig.4_localrep_231202_v3.pdf"),
+       g, width = 130, height = 120, units = "mm")
 

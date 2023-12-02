@@ -1,5 +1,4 @@
 
-
 ##### Visualization of Mar-Sep comparison #####
 diff_vis_MarSep <- function(df, var, condition){
   
@@ -19,17 +18,30 @@ diff_vis_MarSep <- function(df, var, condition){
   }else if(condition=="Shade"){
     subtitle <- "shade"
   }
+  
+  df$time <- df$time + 6
+  
+  #sunrise1_mar <- 5+56/60
+  sunset1_mar <- 18+18/60
+  sunrise2_mar <- 5+54/60 + 24
+  #sunrise1_sep <- 5+41/60
+  sunset1_sep <- 18+9/60
+  sunrise2_sep <- 5+41/60 + 24
 
   g1 <- ggplot(data = df, aes(x = time)) +
-    annotate("rect", xmin = 12, xmax = 24, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50")+
+    # annotate("rect", xmin = sunset1_mar, xmax = sunrise2_mar, ymin = ymax1-(ymax1-ymin1)*0.1, ymax = ymax1, alpha = 0.6, fill = "gray50")+
+    # annotate("rect", xmin = sunset1_sep, xmax = sunrise2_sep, ymin = ymax1-(ymax1-ymin1)*0.2, ymax = ymax1-(ymax1-ymin1)*0.1, alpha = 0.6, fill = "burlywood3")+  
+    geom_vline(xintercept = c(sunset1_mar, sunrise2_mar), linetype = "solid", linewidth = 0.2, col = "gray70") +
+    geom_vline(xintercept = c(sunset1_sep, sunrise2_sep), linetype = "dashed", linewidth = 0.2, col = "gray70") +
     geom_ribbon(aes(ymin = `mu1_2.5%`, ymax = `mu1_97.5%`), alpha = 0.3, fill = "#FF1493") +
     geom_line(aes(y = `mu1_50%`), col = "#FF1493") +
     geom_point(aes(y = data1), col = "#FF1493", alpha = 0.6) +
     geom_ribbon(aes(ymin = `mu2_2.5%`, ymax = `mu2_97.5%`), alpha = 0.3, fill = "#522A17") +
     geom_line(aes(y = `mu2_50%`), col = "#522A17") +
     geom_point(aes(y = data2), col = "#522A17", alpha = 0.6) +
-    scale_x_continuous(breaks=seq(12,30,6)) +  
+    scale_x_continuous(breaks=c(18, 24, 30, 36), labels=c("18:00", "0:00", "6:00", "12:00")) +
     scale_y_continuous(expand = c(0,0), breaks=seq1) +
+    coord_cartesian(ylim = c(ymin1, ymax1), clip = 'off') +
     theme_classic(base_size = 7) +
     theme(legend.position = "none",
           axis.title = element_text(size = 7),
@@ -38,25 +50,29 @@ diff_vis_MarSep <- function(df, var, condition){
           axis.text.x = element_blank(),
           plot.title = element_text(size = 7),
           plot.tag = element_text(face = "bold", size = 10),
-          plot.margin = unit(c(0.3,0.3,0.1,0.3), "cm")) +
+          plot.margin = unit(c(0.1,0.3,0.1,0.2), "cm")) +
     labs(title = bquote(paste(italic(.(var)), " (", .(subtitle), ")", sep = "")),
          y = "Relative\ntranscript\nabundance")
   
   g2 <- ggplot(data = df, aes(x = time)) +
-    annotate("rect", xmin = 12, xmax = 24, ymin = ymin2, ymax = ymax2, alpha = 0.3, fill = "gray50")+
+    # annotate("rect", xmin = sunset1_mar, xmax = sunrise2_mar, ymin = ymax2-(ymax2-ymin2)*0.1, ymax = ymax2, alpha = 0.6, fill = "gray50")+
+    # annotate("rect", xmin = sunset1_sep, xmax = sunrise2_sep, ymin = ymax2-(ymax2-ymin2)*0.2, ymax = ymax2-(ymax2-ymin2)*0.1, alpha = 0.6, fill = "burlywood3")+ 
+    geom_vline(xintercept = c(sunset1_mar, sunrise2_mar), linetype = "solid", linewidth = 0.2, col = "gray70") +
+    geom_vline(xintercept = c(sunset1_sep, sunrise2_sep), linetype = "dashed", linewidth = 0.2, col = "gray70") +
     geom_ribbon(aes(ymin = `diff_2.5%`, ymax = `diff_97.5%`), alpha = 0.5) +
     geom_line(aes(y = `diff_50%`)) +
     geom_hline(yintercept = 0, linetype="dashed") +
-    scale_x_continuous(breaks=seq(12,30,6)) + 
+    scale_x_continuous(breaks=c(18, 24, 30, 36), labels=c("18:00", "0:00", "6:00", "12:00")) +
     scale_y_continuous(expand = c(0,0), breaks=seq2) +
+    coord_cartesian(ylim = c(ymin2, ymax2), clip = 'off') +
     theme_classic(base_size = 7) +
     theme(legend.position = "none",
           axis.title = element_text(size = 7),
           axis.text = element_text(size = 7),
           plot.title = element_blank(),
           plot.tag = element_text(face = "bold", size = 10),
-          plot.margin = unit(c(0,0.3,0.3,0.3), "cm")) +
-    labs(x = "Time relative to initial dawn (h)", 
+          plot.margin = unit(c(0,0.3,0.2,0.2), "cm")) +
+    labs(x = "Local time (hh:mm)", 
          y = "Sep. - Mar.")
   
   g2 <- g2 + annotate("text", x = df$time[df$signif_diff], 
@@ -74,31 +90,41 @@ diff_vis_SunShade <- function(df, var, season){
   
   if(var=="AhgCCA1"){
     ymin1 <- -5; ymax1 <- 25; seq1 <- seq(0,20,10)
-    ymin2 <- -6.2; ymax2 <- 2; seq2 <- seq(-6,2,2)
+    ymin2 <- -2; ymax2 <- 6.5; seq2 <- seq(-2,6,2)
   }else if(var=="AhgSIG5"){
     ymin1 <- -0.5; ymax1 <- 3.1; seq1 <- seq(0,3,1)
-    ymin2 <- -1.8; ymax2 <- 0.5; seq2 <- seq(-1.5,0.5,0.5)
+    ymin2 <- -0.5; ymax2 <- 2; seq2 <- seq(-0.5,2,0.5)
   }else if(var=="AhgpsbD BLRP"){
     ymin1 <- 0; ymax1 <- 5.1; seq1 <- seq(0,5,2.5)
-    ymin2 <- -2.8; ymax2 <- 1.5; seq2 <- seq(-2,1,1)
+    ymin2 <- -1.5; ymax2 <- 2.8; seq2 <- seq(-1,2,1)
   }
   
   if(season=="Mar"){
     subtitle <- "March/Spring"
+    #sunrise1_mar <- 5+56/60
+    sunset1 <- 18+18/60
+    sunrise2 <- 5+54/60 + 24
   }else if(season=="Sep"){
     subtitle <- "September/Autumn"
+    #sunrise1_sep <- 5+41/60
+    sunset1 <- 18+9/60
+    sunrise2 <- 5+41/60 + 24
   }
   
+  df$time <- df$time + 6
+  
   g1 <- ggplot(data = df, aes(x = time)) +
-    annotate("rect", xmin = 12, xmax = 24, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50")+
+    # annotate("rect", xmin = 12, xmax = 24, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50")+
+    geom_vline(xintercept = c(sunset1, sunrise2), linetype = "dashed", linewidth = 0.2, col = "gray50") +
     geom_ribbon(aes(ymin = `mu1_2.5%`, ymax = `mu1_97.5%`), alpha = 0.3, fill = "orange") +
     geom_line(aes(y = `mu1_50%`), col = "orange") +
     geom_point(aes(y = data1), col = "orange", alpha = 0.6) +
     geom_ribbon(aes(ymin = `mu2_2.5%`, ymax = `mu2_97.5%`), alpha = 0.3, fill = "gray30") +
     geom_line(aes(y = `mu2_50%`), col = "gray30") +
     geom_point(aes(y = data2), col = "gray30", alpha = 0.6) +
-    scale_x_continuous(breaks=seq(12,30,6)) +  
+    scale_x_continuous(breaks=c(18, 24, 30, 36), labels=c("18:00", "0:00", "6:00", "12:00")) +
     scale_y_continuous(expand = c(0,0), breaks=seq1) +
+    coord_cartesian(ylim = c(ymin1, ymax1), clip = 'off') +
     theme_classic(base_size = 7) +
     theme(legend.position = "none",
           axis.title = element_text(size = 7),
@@ -107,26 +133,28 @@ diff_vis_SunShade <- function(df, var, season){
           axis.text.x = element_blank(),
           plot.title = element_text(size = 7),
           plot.tag = element_text(face = "bold", size = 10),
-          plot.margin = unit(c(0.3,0.3,0.1,0.3), "cm")) +
+          plot.margin = unit(c(0.1,0.3,0.1,0.2), "cm")) +
     labs(title = bquote(paste(italic(.(var)), " (", .(subtitle), ")", sep = "")),
          y = "Relative\ntranscript\nabundance")
   
   g2 <- ggplot(data = df, aes(x = time)) +
-    annotate("rect", xmin = 12, xmax = 24, ymin = ymin2, ymax = ymax2, alpha = 0.3, fill = "gray50")+
+    # annotate("rect", xmin = 12, xmax = 24, ymin = ymin2, ymax = ymax2, alpha = 0.3, fill = "gray50")+
+    geom_vline(xintercept = c(sunset1, sunrise2), linetype = "dashed", linewidth = 0.2, col = "gray50") +
     geom_ribbon(aes(ymin = `diff_2.5%`, ymax = `diff_97.5%`), alpha = 0.5) +
     geom_line(aes(y = `diff_50%`)) +
     geom_hline(yintercept = 0, linetype="dashed") +
-    scale_x_continuous(breaks=seq(12,30,6)) + 
+    scale_x_continuous(breaks=c(18, 24, 30, 36), labels=c("18:00", "0:00", "6:00", "12:00")) +
     scale_y_continuous(expand = c(0,0), breaks=seq2) +
+    coord_cartesian(ylim = c(ymin2, ymax2), clip = 'off') +
     theme_classic(base_size = 7) +
     theme(legend.position = "none",
           axis.title = element_text(size = 7),
           axis.text = element_text(size = 7),
           plot.title = element_blank(),
           plot.tag = element_text(face = "bold", size = 10),
-          plot.margin = unit(c(0,0.3,0.3,0.3), "cm")) +
-    labs(x = "Time relative to initial dawn (h)", 
-         y = "Sun - Shade")
+          plot.margin = unit(c(0,0.3,0.2,0.2), "cm")) +
+    labs(x = "Local time (hh:mm)", 
+         y = "Shade - Sun")
   
   g2 <- g2 + annotate("text", x = df$time[df$signif_diff], 
                       y = ymax2-(ymax2-ymin2)*0.1, label = "*", size = 3)
@@ -152,9 +180,17 @@ diff_vis_local <- function(df, var){
     ymin2 <- -2.6; ymax2 <- 3.2; seq2 <- seq(-2,3,1)
   }
   
+  df$time <- df$time + 6
+  
+  #sunrise1_sep <- 5+41/60
+  sunset1_sep <- 18+13/60
+  sunrise2_sep <- 5+40/60 + 24
+  sunset2_sep <- 18+11/60 + 24
+  
   g1 <- ggplot(data = df, aes(x = time)) +
-    annotate("rect", xmin = 12, xmax = 24, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50") +
-    annotate("rect", xmin = 36, xmax = 39, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50") +
+    annotate("rect", xmin = sunset1_sep, xmax = sunrise2_sep, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50") +
+    annotate("rect", xmin = sunset2_sep, xmax = 45, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50") +
+    # geom_vline(xintercept = c(sunset1_sep, sunrise2_sep, sunset2_sep), linetype = "dashed", linewidth = 0.2, col = "gray50") +
     geom_ribbon(aes(ymin = `mu1_2.5%`, ymax = `mu1_97.5%`), alpha = 0.3, fill = "black") +
     geom_line(aes(y = `mu1_50%`), col = "black") +
     geom_point(aes(y = data_A), col = "black", alpha = 0.6) +
@@ -167,8 +203,9 @@ diff_vis_local <- function(df, var){
     #geom_ribbon(aes(ymin = mu4_2.5, ymax = mu4_97.5), alpha = 0.3, fill = "lavenderblush4") +
     #geom_line(aes(y = mu4_50), col = "lavenderblush4") +
     #geom_point(aes(y = data_L), col = "lavenderblush4", alpha = 0.6) +
-    scale_x_continuous(breaks=seq(12,36,6)) +  
+    scale_x_continuous(breaks=c(18, 24, 30, 36, 42), labels=c("18:00", "0:00", "6:00", "12:00", "18:00")) +
     scale_y_continuous(expand = c(0,0), breaks=seq1) +
+    # coord_cartesian(ylim = c(ymin1, ymax1), clip = 'off') +
     theme_classic(base_size = 7) +
     theme(legend.position = "none",
           axis.title = element_text(size = 7),
@@ -177,13 +214,14 @@ diff_vis_local <- function(df, var){
           axis.text.x = element_blank(),
           plot.title = element_text(size = 7, face = "italic"),
           plot.tag = element_text(face = "bold", size = 10),
-          plot.margin = unit(c(0.3,0.3,0.1,0.3), "cm")) +
+          plot.margin = unit(c(0.1,0.3,0.1,0.2), "cm")) +
     labs(title = var,
          y = "Relative\ntranscript\nabundance")
   
   g2 <- ggplot(data = df, aes(x = time)) +
-    annotate("rect", xmin = 12, xmax = 24, ymin = ymin2, ymax = ymax2, alpha = 0.3, fill = "gray50") +
-    annotate("rect", xmin = 36, xmax = 39, ymin = ymin2, ymax = ymax2, alpha = 0.3, fill = "gray50") +
+    annotate("rect", xmin = sunset1_sep, xmax = sunrise2_sep, ymin = ymin2, ymax = ymax2, alpha = 0.3, fill = "gray50") +
+    annotate("rect", xmin = sunset2_sep, xmax = 45, ymin = ymin2, ymax = ymax2, alpha = 0.3, fill = "gray50") +
+    # geom_vline(xintercept = c(sunset1_sep, sunrise2_sep, sunset2_sep), linetype = "dashed", linewidth = 0.2, col = "gray50") +
     geom_ribbon(aes(ymin = `diff2_2.5%`, ymax = `diff2_97.5%`), alpha = 0.5, fill = "orangered") +
     geom_line(aes(y = `diff2_50%`), col = "orangered") +
     geom_ribbon(aes(ymin = `diff3_2.5%`, ymax = `diff3_97.5%`), alpha = 0.5, fill = "cyan3") +
@@ -191,16 +229,17 @@ diff_vis_local <- function(df, var){
     #geom_line(aes(y = diff4_50), col = "lavenderblush4") +
     #geom_ribbon(aes(ymin = diff4_2.5, ymax = diff4_97.5), alpha = 0.5, fill = "lavenderblush4") +
     geom_hline(yintercept = 0, linetype="dashed") +
-    scale_x_continuous(breaks=seq(12,36,6)) + 
+    scale_x_continuous(breaks=c(18, 24, 30, 36, 42), labels=c("18:00", "0:00", "6:00", "12:00", "18:00")) +
     scale_y_continuous(expand = c(0,0), breaks=seq2) +
+    # coord_cartesian(ylim = c(ymin2, ymax2), clip = 'off') +
     theme_classic(base_size = 7) +
     theme(legend.position = "none",
           axis.title = element_text(size = 7),
           axis.text = element_text(size = 7),
           plot.title = element_blank(),
           plot.tag = element_text(face = "bold", size = 10),
-          plot.margin = unit(c(0,0.3,0.3,0.3), "cm")) +
-    labs(x = "Time relative to initial dawn (h)", 
+          plot.margin = unit(c(0,0.3,0.2,0.2), "cm")) +
+    labs(x = "Local time (hh:mm)", 
          y = "Difference\nagainst\nambient")
   
   g2 <- g2 + annotate("text", x = df$time[df$signif_diff2], 
@@ -238,18 +277,28 @@ Pred_vis_cyclic <- function(df1, df2, var){
     # ymin6 <- -0.6; ymax6 <- 2.2; seq6 <- seq(-0.5,2,0.5)
   }
   
+  df1$time <- df1$time + 6
+  
+  #sunrise1_mar <- 5+56/60
+  sunset1_mar <- 18+18/60
+  sunrise2_mar <- 5+54/60 + 24
+  #sunrise1_sep <- 5+41/60
+  sunset1_sep <- 18+9/60
+  sunrise2_sep <- 5+41/60 + 24
   
   g1 <- ggplot(data = df1, aes(x = time)) +
-    annotate("rect", xmin = 12, xmax = 24, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50") +
+    # annotate("rect", xmin = 12, xmax = 24, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50") +
+    geom_vline(xintercept = c(sunset1_mar, sunrise2_mar), linetype = "solid", linewidth = 0.2, col = "gray70") +
+    geom_vline(xintercept = c(sunset1_sep, sunrise2_sep), linetype = "dashed", linewidth = 0.2, col = "gray70") +
     geom_ribbon(aes(ymin = alpha_MarSun_2.5, ymax = alpha_MarSun_97.5), alpha = 0.3, fill = "chocolate") +
     geom_line(aes(y = alpha_MarSun_50), col = "chocolate") +
     geom_point(aes(y = data_MarSun), col = "chocolate", alpha = 0.6) +
     geom_ribbon(aes(ymin = alpha_SepSun_2.5, ymax = alpha_SepSun_97.5), alpha = 0.3, fill = "dodgerblue4") +
     geom_line(aes(y = alpha_SepSun_50), col = "dodgerblue4") +
     geom_point(aes(y = data_SepSun), col = "dodgerblue4", alpha = 0.6) +
-    scale_x_continuous(breaks=seq(12,30,6), limits = c(8,32)) +
+    scale_x_continuous(breaks=c(18, 24, 30, 36), labels=c("18:00", "0:00", "6:00", "12:00")) +
     scale_y_continuous(expand = c(0,0), breaks=seq1) +
-    coord_cartesian(clip = 'off') +
+    coord_cartesian(ylim = c(ymin1, ymax1), clip = 'off') +
     theme_classic(base_size = 7) +
     theme(legend.position = "none",
           plot.title = element_text(size = 7),
@@ -258,20 +307,22 @@ Pred_vis_cyclic <- function(df1, df2, var){
           axis.title.y = element_blank(),
           plot.margin = unit(c(0, 5, 0, 0),"mm")) +
     labs(title = bquote(paste(italic(.(var)), " transcript (sun)", sep="")),
-         x = "Time relative to initial dawn (h)", 
+         x = "Local time (hh:mm)", 
          tag = "A")
   
   g2 <- ggplot(data = df1, aes(x = time)) +
-    annotate("rect", xmin = 12, xmax = 24, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50") +
+    # annotate("rect", xmin = 12, xmax = 24, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50") +
+    geom_vline(xintercept = c(sunset1_mar, sunrise2_mar), linetype = "solid", linewidth = 0.2, col = "gray70") +
+    geom_vline(xintercept = c(sunset1_sep, sunrise2_sep), linetype = "dashed", linewidth = 0.2, col = "gray70") +
     geom_ribbon(aes(ymin = alpha_MarShade_2.5, ymax = alpha_MarShade_97.5), alpha = 0.3, fill = "chocolate") +
     geom_line(aes(y = alpha_MarShade_50), col = "chocolate") +
     geom_point(aes(y = data_MarShade), col = "chocolate", alpha = 0.6) +
     geom_ribbon(aes(ymin = alpha_SepShade_2.5, ymax = alpha_SepShade_97.5), alpha = 0.3, fill = "dodgerblue4") +
     geom_line(aes(y = alpha_SepShade_50), col = "dodgerblue4") +
     geom_point(aes(y = data_SepShade), col = "dodgerblue4", alpha = 0.6) +
-    scale_x_continuous(breaks=seq(12,30,6), limits = c(8,32)) +
+    scale_x_continuous(breaks=c(18, 24, 30, 36), labels=c("18:00", "0:00", "6:00", "12:00")) +
     scale_y_continuous(expand = c(0,0), breaks=seq1) +
-    coord_cartesian(clip = 'off') +
+    coord_cartesian(ylim = c(ymin1, ymax1), clip = 'off') +
     theme_classic(base_size = 7) +
     theme(legend.position = "none",
           plot.title = element_text(size = 7),
@@ -280,17 +331,19 @@ Pred_vis_cyclic <- function(df1, df2, var){
           axis.title.y = element_blank(),
           plot.margin = unit(c(0, 0, 0, 0),"mm")) +
     labs(title = bquote(paste(italic(.(var)), " transcript (shade)", sep="")),
-         x = "Time relative to initial dawn (h)", 
+         x = "Local time (hh:mm)", 
          tag = "B")
   
   g3 <- ggplot(data = df1, aes(x = time)) +
-    annotate("rect", xmin = 12, xmax = 24, ymin = ymin3, ymax = ymax3, alpha = 0.3, fill = "gray50")+
+    # annotate("rect", xmin = 12, xmax = 24, ymin = ymin3, ymax = ymax3, alpha = 0.3, fill = "gray50")+
+    geom_vline(xintercept = c(sunset1_mar, sunrise2_mar), linetype = "solid", linewidth = 0.2, col = "gray70") +
+    geom_vline(xintercept = c(sunset1_sep, sunrise2_sep), linetype = "dashed", linewidth = 0.2, col = "gray70") +
     geom_ribbon(aes(ymin = mu_2.5, ymax = mu_97.5), alpha = 0.5) +
     geom_line(aes(y = mu_50)) +
     # geom_hline(yintercept = 0, linetype="dashed") +
-    scale_x_continuous(breaks=seq(12,30,6), limits = c(8,32)) + 
+    scale_x_continuous(breaks=c(18, 24, 30, 36), labels=c("18:00", "0:00", "6:00", "12:00")) +
     scale_y_continuous(expand = c(0,0), breaks=seq3) +
-    coord_cartesian(clip = 'off') +
+    coord_cartesian(ylim = c(ymin3, ymax3), clip = 'off') +
     theme_classic(base_size = 7) +
     theme(legend.position = "none",
           plot.title = element_text(size = 7),
@@ -298,8 +351,8 @@ Pred_vis_cyclic <- function(df1, df2, var){
           axis.title.y = element_blank(),
           axis.text = element_text(size = 7),
           plot.margin = unit(c(0, 0, 0, 0),"mm")) +
-    labs(x = "Time relative to initial dawn (h)", 
-         title = "Circadian trend",
+    labs(x = "Local time (hh:mm)", 
+         title = "Diel trend",
          tag = "C")
   
   
@@ -413,16 +466,27 @@ Pred_vis_cyclic_constant <- function(df, var, cond){
     ymin1 <- -0.3; ymax1 <- 3; seq1 <- seq(0,3,1)
   }
   
+  df$time <- df$time + 6
+  
+  #sunrise1_mar <- 5+56/60
+  sunset1_mar <- 18+18/60
+  sunrise2_mar <- 5+54/60 + 24
+  #sunrise1_sep <- 5+41/60
+  sunset1_sep <- 18+9/60
+  sunrise2_sep <- 5+41/60 + 24
   
   g1 <- ggplot(data = df, aes(x = time)) +
-    annotate("rect", xmin = 12, xmax = 24, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50") +
+    # annotate("rect", xmin = 12, xmax = 24, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50") +
+    geom_vline(xintercept = c(sunset1_mar, sunrise2_mar), linetype = "solid", linewidth = 0.2, col = "gray70") +
+    geom_vline(xintercept = c(sunset1_sep, sunrise2_sep), linetype = "dashed", linewidth = 0.2, col = "gray70") +
     geom_ribbon(aes(ymin = alpha_MarSun_2.5, ymax = alpha_MarSun_97.5), alpha = 0.3, fill = "chocolate") +
     geom_line(aes(y = alpha_MarSun_50), col = "chocolate") +
     geom_ribbon(aes(ymin = alpha_SepSun_2.5, ymax = alpha_SepSun_97.5), alpha = 0.3, fill = "dodgerblue4") +
     geom_line(aes(y = alpha_SepSun_50), col = "dodgerblue4") +
-    scale_x_continuous(breaks=seq(12,30,6), limits = c(8,32)) +
+    scale_x_continuous(breaks=c(18, 24, 30, 36), labels=c("18:00", "0:00", "6:00", "12:00")) +
+    # scale_x_continuous(breaks=seq(12,30,6), limits = c(8,32)) +
     scale_y_continuous(expand = c(0,0), breaks=seq1) +
-    coord_cartesian(clip = 'off') +
+    coord_cartesian(ylim = c(ymin1, ymax1), clip = 'off') +
     theme_classic(base_size = 7) +
     theme(legend.position = "none",
           plot.title = element_text(size = 7),
@@ -431,18 +495,21 @@ Pred_vis_cyclic_constant <- function(df, var, cond){
           axis.title.y = element_blank(),
           plot.margin = unit(c(0, 5, 0, 0),"mm")) +
     labs(title = bquote(paste(italic(.(var)), " (sun, ", .(cond), ")", sep="")),
-         x = "Time relative to initial dawn (h)", 
+         x = "Local time (hh:mm)", 
          tag = "A")
   
   g2 <- ggplot(data = df, aes(x = time)) +
-    annotate("rect", xmin = 12, xmax = 24, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50") +
+    # annotate("rect", xmin = 12, xmax = 24, ymin = ymin1, ymax = ymax1, alpha = 0.3, fill = "gray50") +
+    geom_vline(xintercept = c(sunset1_mar, sunrise2_mar), linetype = "solid", linewidth = 0.2, col = "gray70") +
+    geom_vline(xintercept = c(sunset1_sep, sunrise2_sep), linetype = "dashed", linewidth = 0.2, col = "gray70") +
     geom_ribbon(aes(ymin = alpha_MarShade_2.5, ymax = alpha_MarShade_97.5), alpha = 0.3, fill = "chocolate") +
     geom_line(aes(y = alpha_MarShade_50), col = "chocolate") +
     geom_ribbon(aes(ymin = alpha_SepShade_2.5, ymax = alpha_SepShade_97.5), alpha = 0.3, fill = "dodgerblue4") +
     geom_line(aes(y = alpha_SepShade_50), col = "dodgerblue4") +
-    scale_x_continuous(breaks=seq(12,30,6), limits = c(8,32)) +
+    scale_x_continuous(breaks=c(18, 24, 30, 36), labels=c("18:00", "0:00", "6:00", "12:00")) +
+    # scale_x_continuous(breaks=seq(12,30,6), limits = c(8,32)) +
     scale_y_continuous(expand = c(0,0), breaks=seq1) +
-    coord_cartesian(clip = 'off') +
+    coord_cartesian(ylim = c(ymin1, ymax1), clip = 'off') +
     theme_classic(base_size = 7) +
     theme(legend.position = "none",
           plot.title = element_text(size = 7),
@@ -451,7 +518,7 @@ Pred_vis_cyclic_constant <- function(df, var, cond){
           axis.title.y = element_blank(),
           plot.margin = unit(c(0, 0, 0, 0),"mm")) +
     labs(title = bquote(paste(italic(.(var)), " (shade, ", .(cond), ")", sep="")),
-         x = "Time relative to initial dawn (h)", 
+         x = "Local time (hh:mm)", 
          tag = "B")
   
   return(list(g1, g2))
